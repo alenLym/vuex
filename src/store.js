@@ -16,6 +16,8 @@ export function createStore(options) {
   return new Store(options)
 }
 
+/* 上面的类是 JavaScript 中的 Vuex store 实现，具有各种管理方法
+state、mutations、actions、modules 和 subscriptions。*/
 export class Store {
   constructor(options = {}) {
     if (__DEV__) {

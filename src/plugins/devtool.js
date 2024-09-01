@@ -8,6 +8,17 @@ const INSPECTOR_ID = 'vuex'
 
 let actionId = 0
 
+/**
+ * 函数 'addDevtools' 在 Vue.js 应用程序中为 Vuex 设置了一个 devtools 插件，提供
+ * 用于检查和跟踪更改和操作的功能。
+ * @param app - 'addDevtools' 函数中的 'app' 参数通常是对
+ * Vue.js要添加 Vuex Devtools 的应用程序实例。这允许 Devtools
+ * 与 Vue.js 应用程序及其 Vuex store 交互以进行调试和检查。
+ * @param store - addDevtools' 函数中的 'store' 参数通常是 Vuex 的一个实例
+ * store 在 Vue.js 应用程序中。它用于与状态管理系统交互并跟踪
+ * 用于调试和监控目的的 mutations 和 actions。store 包含应用程序的
+ * state、mutations、actions 和
+ */
 export function addDevtools (app, store) {
   setupDevtoolsPlugin(
     {
@@ -166,15 +177,39 @@ const TAG_NAMESPACED = {
 }
 
 /**
- * @param {string} path
+ * @param {string} 路径
+ */
+/**
+ * 函数 'extractNameFromPath' 通过拆分并返回给定路径来从给定路径中提取名称
+ * 倒数第二个元素。
+ * @param path - 'extractNameFromPath' 函数将 'path' 作为输入并返回
+ * 如果路径不是 'root'，则为路径的倒数第二段。如果路径为 'root' 或为空，则
+ * 返回 'Root'。
+ * @returns 函数 'extractNameFromPath' 将 'path' 作为输入并返回倒数第二个
+ * 段（如果路径不是 'root'）。如果路径为 'root' 或空，则返回 'Root'。
  */
 function extractNameFromPath (path) {
   return path && path !== 'root' ? path.split('/').slice(-2, -1)[0] : 'Root'
 }
 
 /**
- * @param {*} module
- * @return {import('@vue/devtools-api').CustomInspectorNode}
+ * @param {*} 模块
+ * @return {import（'@vue/devtools-api'）.CustomInspectorNode}
+ */
+/**
+ * 函数 'formatStoreForInspectorTree' 以递归方式将模块及其子模块格式化为树
+ * 结构进行检查。
+ * @param模块 - “formatStoreForInspectorTree”函数中的“module”参数表示
+ * 模块。它包含有关模块的信息，例如其子模块以及
+ * 无论是否具有命名空间。
+ * @param path - 'formatStoreForInspectorTree' 函数中的 'path' 参数表示路径
+ * 中。它用于确定
+ * Inspector 树。该函数从路径中提取名称，以显示在树结构中。如果
+ * 路径为
+ * @returns 函数 'formatStoreForInspectorTree' 返回具有以下属性的对象：
+ * - 'id'：'path' 值（如果存在），否则设置为 'root'。
+ * - label：对 path：对 path：调用 extractNameFromPath 函数的结果。
+ * - 'tags'：包含 'TAG_NAMESPACED' 值的数组，如果 'module
  */
 function formatStoreForInspectorTree (module, path) {
   return {
@@ -194,11 +229,13 @@ function formatStoreForInspectorTree (module, path) {
 }
 
 /**
- * @param {import('@vue/devtools-api').CustomInspectorNode[]} result
- * @param {*} module
- * @param {string} filter
- * @param {string} path
+ * @param {import（'@vue/devtools-api'） 中。CustomInspectorNode[]} 结果
+ * @param {*} 模块
+ * @param {string} 过滤器
+ * @param {string} 路径
  */
+/* 'flattenStoreForInspectorTree' 函数递归遍历 Vuex store 模块
+来扁平化 store 结构，以便在 Vue Devtools inspector 树中显示。*/
 function flattenStoreForInspectorTree (result, module, filter, path) {
   if (path.includes(filter)) {
     result.push({
@@ -213,9 +250,14 @@ function flattenStoreForInspectorTree (result, module, filter, path) {
 }
 
 /**
- * @param {*} module
- * @return {import('@vue/devtools-api').CustomInspectorState}
+ * @param {*} 模块
+ * @return {import（'@vue/devtools-api'）.CustomInspectorState}
  */
+/* 'formatStoreForInspectorState' 函数负责格式化 Vuex store 模块
+显示在 Vue Devtools 检查器中。它需要三个参数：
+1. 'module'：表示需要格式化的 Vuex store 模块。
+2. 'getters'：表示与模块关联的 getter。
+3. 'path'：表示模块在 Vuex store 中的路径。*/
 function formatStoreForInspectorState (module, getters, path) {
   getters = path === 'root' ? getters : getters[path]
   const gettersKeys = Object.keys(getters)
@@ -239,6 +281,9 @@ function formatStoreForInspectorState (module, getters, path) {
   return storeState
 }
 
+/* 'transformPathsToObjectTree' 函数将 'getters' 对象作为输入，它表示
+Vuex store 模块中的 getter。然后，它将 getter 的路径转换为对象树
+结构。*/
 function transformPathsToObjectTree (getters) {
   const result = {}
   Object.keys(getters).forEach(key => {
@@ -267,6 +312,9 @@ function transformPathsToObjectTree (getters) {
   return result
 }
 
+/* 'getStoreModule' 函数用于根据
+提供的路径。它需要两个参数：'moduleMap'，它表示
+store 和 'path'，这是需要检索的特定模块的路径。*/
 function getStoreModule (moduleMap, path) {
   const names = path.split('/').filter((n) => n)
   return names.reduce(
@@ -281,6 +329,11 @@ function getStoreModule (moduleMap, path) {
   )
 }
 
+/* 'canThrow' 函数是一个实用函数，它以回调函数 'cb' 作为参数。它
+尝试执行回调函数并返回其结果。如果在
+执行回调函数时，'canThrow' 函数会捕获错误并返回它
+扔它。这允许代码在发生错误时继续执行而不会崩溃
+在回调函数中。*/
 function canThrow (cb) {
   try {
     return cb()
