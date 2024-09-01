@@ -154,7 +154,7 @@ export function addDevtools (app, store) {
   )
 }
 
-// extracted from tailwind palette
+// 从 Tailwind 调色板中提取
 const COLOR_LIME_500 = 0x84cc16
 const COLOR_DARK = 0x666666
 const COLOR_WHITE = 0xffffff
@@ -179,9 +179,9 @@ function extractNameFromPath (path) {
 function formatStoreForInspectorTree (module, path) {
   return {
     id: path || 'root',
-    // all modules end with a `/`, we want the last segment only
-    // cart/ -> cart
-    // nested/cart/ -> cart
+    // 所有模块都以 '/' 结尾，我们只想要最后一段
+// 购物车/ -> 购物车
+// 嵌套/推车/ -> 推车
     label: extractNameFromPath(path),
     tags: module.namespaced ? [TAG_NAMESPACED] : [],
     children: Object.keys(module._children).map((moduleName) =>

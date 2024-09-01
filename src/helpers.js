@@ -1,9 +1,9 @@
 import { isObject } from './util'
 
 /**
- * Reduce the code which written in Vue.js for getting the state.
- * @param {String} [namespace] - Module's namespace
- * @param {Object|Array} states # Object's item can be a function which accept state and getters for param, you can do something for state and getters in it.
+ * 减少用 Vue.js 编写的代码以获取状态。
+ * @param {String} [namespace] - 模块的命名空间
+ * @param {Object|数组} 状态 # 对象的 item 可以是一个函数，它接受 param 的 state 和 getter，你可以在其中为 state 和 getter 做一些事情。
  * @param {Object}
  */
 export const mapState = normalizeNamespace((namespace, states) => {
@@ -27,16 +27,16 @@ export const mapState = normalizeNamespace((namespace, states) => {
         ? val.call(this, state, getters)
         : state[val]
     }
-    // mark vuex getter for devtools
+    // 标记 Vuex Getter for DevTools
     res[key].vuex = true
   })
   return res
 })
 
 /**
- * Reduce the code which written in Vue.js for committing the mutation
- * @param {String} [namespace] - Module's namespace
- * @param {Object|Array} mutations # Object's item can be a function which accept `commit` function as the first param, it can accept another params. You can commit mutation and do any other things in this function. specially, You need to pass anthor params from the mapped function.
+ * 减少用 Vue.js 编写的代码以提交 mutation
+ * @param {String} [namespace] - 模块的命名空间
+ * @param {Object|Array} mutations # 对象的 item 可以是一个接受 'commit' 函数作为第一个参数的函数，它可以接受另一个参数。你可以提交 mutation 并在这个函数中做任何其他事情。特别是，你需要从 map 函数中传递 anthor params。
  * @return {Object}
  */
 export const mapMutations = normalizeNamespace((namespace, mutations) => {
@@ -64,9 +64,9 @@ export const mapMutations = normalizeNamespace((namespace, mutations) => {
 })
 
 /**
- * Reduce the code which written in Vue.js for getting the getters
- * @param {String} [namespace] - Module's namespace
- * @param {Object|Array} getters
+ * 减少用 Vue.js 编写的代码以获取 getter
+ * @param {String} [namespace] - 模块的命名空间
+ * @param {Object|Array} getter
  * @return {Object}
  */
 export const mapGetters = normalizeNamespace((namespace, getters) => {
@@ -75,7 +75,7 @@ export const mapGetters = normalizeNamespace((namespace, getters) => {
     console.error('[vuex] mapGetters: mapper parameter must be either an Array or an Object')
   }
   normalizeMap(getters).forEach(({ key, val }) => {
-    // The namespace has been mutated by normalizeNamespace
+    // 命名空间已被 normalizeNamespace 更改
     val = namespace + val
     res[key] = function mappedGetter () {
       if (namespace && !getModuleByNamespace(this.$store, 'mapGetters', namespace)) {
@@ -87,16 +87,16 @@ export const mapGetters = normalizeNamespace((namespace, getters) => {
       }
       return this.$store.getters[val]
     }
-    // mark vuex getter for devtools
+    // 标记 Vuex Getter for DevTools
     res[key].vuex = true
   })
   return res
 })
 
 /**
- * Reduce the code which written in Vue.js for dispatch the action
- * @param {String} [namespace] - Module's namespace
- * @param {Object|Array} actions # Object's item can be a function which accept `dispatch` function as the first param, it can accept anthor params. You can dispatch action and do any other things in this function. specially, You need to pass anthor params from the mapped function.
+ * Reduce 用 Vue.js 编写的代码，用于 dispatch action
+ * @param {String} [namespace] - 模块的命名空间
+ * @param {Object|Array} actions # 对象的 item 可以是一个接受 'dispatch' 函数作为第一个参数的函数，它可以接受其他参数。你可以在这个函数中 dispatch action 和做任何其他事情。特别是，你需要从 map 函数中传递 anthor params。
  * @return {Object}
  */
 export const mapActions = normalizeNamespace((namespace, actions) => {
@@ -106,7 +106,7 @@ export const mapActions = normalizeNamespace((namespace, actions) => {
   }
   normalizeMap(actions).forEach(({ key, val }) => {
     res[key] = function mappedAction (...args) {
-      // get dispatch function from store
+      // 从 store 获取 dispatch 函数
       let dispatch = this.$store.dispatch
       if (namespace) {
         const module = getModuleByNamespace(this.$store, 'mapActions', namespace)
@@ -124,8 +124,8 @@ export const mapActions = normalizeNamespace((namespace, actions) => {
 })
 
 /**
- * Rebinding namespace param for mapXXX function in special scoped, and return them by simple object
- * @param {String} namespace
+ * 在特殊作用域中重新绑定 mapXXX 函数的 namespace param，并通过 simple object 返回
+ * @param {String} 命名空间
  * @return {Object}
  */
 export const createNamespacedHelpers = (namespace) => ({
@@ -136,10 +136,10 @@ export const createNamespacedHelpers = (namespace) => ({
 })
 
 /**
- * Normalize the map
- * normalizeMap([1, 2, 3]) => [ { key: 1, val: 1 }, { key: 2, val: 2 }, { key: 3, val: 3 } ]
- * normalizeMap({a: 1, b: 2, c: 3}) => [ { key: 'a', val: 1 }, { key: 'b', val: 2 }, { key: 'c', val: 3 } ]
- * @param {Array|Object} map
+ * 规格化地图
+ * normalizeMap（[1， 2， 3]） => [ { key： 1， val： 1 }， { key： 2， val： 2 }， { key： 3， val： 3 } ]
+ * normalizeMap（{a： 1， b： 2， c： 3}） => [ { key： 'a'， val： 1 }， { key： 'b'， val： 2 }， { key： 'c'， val： 3 } ]
+ * @param {array|Object} 映射
  * @return {Object}
  */
 function normalizeMap (map) {
@@ -152,18 +152,18 @@ function normalizeMap (map) {
 }
 
 /**
- * Validate whether given map is valid or not
- * @param {*} map
- * @return {Boolean}
+ * 验证给定的 map 是否有效
+ * @param {*} 地图
+ * @return {布尔}
  */
 function isValidMap (map) {
   return Array.isArray(map) || isObject(map)
 }
 
 /**
- * Return a function expect two param contains namespace and map. it will normalize the namespace and then the param's function will handle the new namespace and the map.
+ * 返回一个函数 expect two param contains namespace 和 map。它将规范化命名空间，然后 Param 的函数将处理新的命名空间和 Map。
  * @param {Function} fn
- * @return {Function}
+ * @return {功能}
  */
 function normalizeNamespace (fn) {
   return (namespace, map) => {
@@ -178,10 +178,10 @@ function normalizeNamespace (fn) {
 }
 
 /**
- * Search a special module from store by namespace. if module not exist, print error message.
- * @param {Object} store
- * @param {String} helper
- * @param {String} namespace
+ * 从 store by namespace 中搜索特殊模块。如果 module 不存在，则打印错误消息。
+ * @param {Object} 存储
+ * @param {String} 帮助程序
+ * @param {String} 命名空间
  * @return {Object}
  */
 function getModuleByNamespace (store, helper, namespace) {

@@ -3,7 +3,7 @@ import { assert, forEachValue } from '../util'
 
 export default class ModuleCollection {
   constructor (rawRootModule) {
-    // register root module (Vuex.Store options)
+    // Register root module （Vuex.Store 选项）
     this.register([], rawRootModule, false)
   }
 
@@ -38,7 +38,7 @@ export default class ModuleCollection {
       parent.addChild(path[path.length - 1], newModule)
     }
 
-    // register nested modules
+    // 注册嵌套模块
     if (rawModule.modules) {
       forEachValue(rawModule.modules, (rawChildModule, key) => {
         this.register(path.concat(key), rawChildModule, runtime)
@@ -85,10 +85,10 @@ function update (path, targetModule, newModule) {
     assertRawModule(path, newModule)
   }
 
-  // update target module
+  // 更新目标模块
   targetModule.update(newModule)
 
-  // update nested modules
+  // 更新嵌套模块
   if (newModule.modules) {
     for (const key in newModule.modules) {
       if (!targetModule.getChild(key)) {

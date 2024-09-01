@@ -1,39 +1,39 @@
 /**
- * Get the first item that pass the test
- * by second argument function
+ * 获取第一个通过测试的项目
+ * by second 参数函数
  *
- * @param {Array} list
- * @param {Function} f
+ * @param {Array} 列表
+ * @param {函数} f
  * @return {*}
  */
-export function find (list, f) {
+export function find(list, f) {
   return list.filter(f)[0]
 }
 
 /**
- * Deep copy the given object considering circular structure.
- * This function caches all nested objects and its copies.
- * If it detects circular structure, use cached copy to avoid infinite loop.
+ * 考虑到圆形结构，深拷贝给定的对象。
+ * 此函数缓存所有嵌套对象及其副本。
+ * 如果检测到循环结构，则使用 cached copy 以避免无限循环。
  *
- * @param {*} obj
- * @param {Array<Object>} cache
+ * @param {*} 对象
+ * @param {Array<Object>} 缓存
  * @return {*}
  */
-export function deepCopy (obj, cache = []) {
-  // just return if obj is immutable value
+export function deepCopy(obj, cache = []) {
+  // 如果 obj 是不可变值，则只返回
   if (obj === null || typeof obj !== 'object') {
     return obj
   }
 
-  // if obj is hit, it is in circular structure
+  // 如果 OBJ 被命中，则为圆形结构
   const hit = find(cache, c => c.original === obj)
   if (hit) {
     return hit.copy
   }
 
   const copy = Array.isArray(obj) ? [] : {}
-  // put the copy into cache at first
-  // because we want to refer it in recursive deepCopy
+  // 首先将副本放入缓存中
+  // 因为我们想要在递归 deepCopy 中引用它
   cache.push({
     original: obj,
     copy
@@ -47,25 +47,25 @@ export function deepCopy (obj, cache = []) {
 }
 
 /**
- * forEach for object
+ * forEach for 对象
  */
-export function forEachValue (obj, fn) {
+export function forEachValue(obj, fn) {
   Object.keys(obj).forEach(key => fn(obj[key], key))
 }
 
-export function isObject (obj) {
+export function isObject(obj) {
   return obj !== null && typeof obj === 'object'
 }
 
-export function isPromise (val) {
+export function isPromise(val) {
   return val && typeof val.then === 'function'
 }
 
-export function assert (condition, msg) {
+export function assert(condition, msg) {
   if (!condition) throw new Error(`[vuex] ${msg}`)
 }
 
-export function partial (fn, arg) {
+export function partial(fn, arg) {
   return function () {
     return fn(arg)
   }

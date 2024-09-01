@@ -12,12 +12,12 @@ import {
   unifyObjectStyle
 } from './store-util'
 
-export function createStore (options) {
+export function createStore(options) {
   return new Store(options)
 }
 
 export class Store {
-  constructor (options = {}) {
+  constructor(options = {}) {
     if (__DEV__) {
       assert(typeof Promise !== 'undefined', `vuex requires a Promise polyfill in this browser.`)
       assert(this instanceof Store, `store must be called with the new operator.`)
@@ -29,7 +29,7 @@ export class Store {
       devtools
     } = options
 
-    // store internal state
+    // 存储内部状态
     this._committing = false
     this._actions = Object.create(null)
     this._actionSubscribers = []
@@ -40,42 +40,45 @@ export class Store {
     this._subscribers = []
     this._makeLocalGettersCache = Object.create(null)
 
-    // EffectScope instance. when registering new getters, we wrap them inside
-    // EffectScope so that getters (computed) would not be destroyed on
-    // component unmount.
+    // EffectScope 实例。注册新的 getter 时，我们会将它们包装在
+    // EffectScope，以便 getter（计算的）不会在
+    // 组件卸载。
     this._scope = null
 
     this._devtools = devtools
 
-    // bind commit and dispatch to self
+    // 将 commit 和 dispatch 绑定到 self
     const store = this
     const { dispatch, commit } = this
-    this.dispatch = function boundDispatch (type, payload) {
+    this.dispatch = function boundDispatch(type, payload) {
       return dispatch.call(store, type, payload)
     }
-    this.commit = function boundCommit (type, payload, options) {
+    this.commit = function boundCommit(type, payload, options) {
       return commit.call(store, type, payload, options)
     }
 
     // strict mode
+    // 严格模式
     this.strict = strict
 
     const state = this._modules.root.state
 
-    // init root module.
-    // this also recursively registers all sub-modules
-    // and collects all module getters inside this._wrappedGetters
+    // init 根模块。
+    // 这也递归地注册了所有子模块
+    // 并收集 this._wrappedGetters 中的所有模块 getter
+    // 注册模块
     installModule(this, state, [], this._modules.root)
 
-    // initialize the store state, which is responsible for the reactivity
-    // (also registers _wrappedGetters as computed properties)
+    // 初始化 store state，它负责响应性
+    // （还将 _wrappedGetters 注册为计算属性）
+    // 重置状态
     resetStoreState(this, state)
 
     // apply plugins
     plugins.forEach(plugin => plugin(this))
   }
-
-  install (app, injectKey) {
+  // 注册
+  install(app, injectKey) {
     app.provide(injectKey || storeKey, this)
     app.config.globalProperties.$store = this
 
@@ -87,19 +90,19 @@ export class Store {
       addDevtools(app, this)
     }
   }
-
-  get state () {
+  // 获取state
+  get state() {
     return this._state.data
   }
-
-  set state (v) {
+  // 修改state
+  set state(v) {
     if (__DEV__) {
       assert(false, `use store.replaceState() to explicit replace store state.`)
     }
   }
-
-  commit (_type, _payload, _options) {
-    // check object-style commit
+  // 提交
+  commit(_type, _payload, _options) {
+    // 检查对象样式的提交
     const {
       type,
       payload,
@@ -115,13 +118,13 @@ export class Store {
       return
     }
     this._withCommit(() => {
-      entry.forEach(function commitIterator (handler) {
+      entry.forEach(function commitIterator(handler) {
         handler(payload)
       })
     })
 
     this._subscribers
-      .slice() // shallow copy to prevent iterator invalidation if subscriber synchronously calls unsubscribe
+      .slice() // 浅层复制，以防止在订阅者同步调用 unsubscribe 时迭代器失效
       .forEach(sub => sub(mutation, this.state))
 
     if (
@@ -134,9 +137,9 @@ export class Store {
       )
     }
   }
-
-  dispatch (_type, _payload) {
-    // check object-style dispatch
+  // 派出
+  dispatch(_type, _payload) {
+    // 检查对象样式的调度
     const {
       type,
       payload
@@ -153,7 +156,7 @@ export class Store {
 
     try {
       this._actionSubscribers
-        .slice() // shallow copy to prevent iterator invalidation if subscriber synchronously calls unsubscribe
+        .slice() // 浅层复制，以防止在订阅者同步调用 unsubscribe 时迭代器失效
         .filter(sub => sub.before)
         .forEach(sub => sub.before(action, this.state))
     } catch (e) {
@@ -195,30 +198,30 @@ export class Store {
       })
     })
   }
-
-  subscribe (fn, options) {
+  // 订阅
+  subscribe(fn, options) {
     return genericSubscribe(fn, this._subscribers, options)
   }
-
-  subscribeAction (fn, options) {
+  // 订阅action
+  subscribeAction(fn, options) {
     const subs = typeof fn === 'function' ? { before: fn } : fn
     return genericSubscribe(subs, this._actionSubscribers, options)
   }
-
-  watch (getter, cb, options) {
+  // 观察
+  watch(getter, cb, options) {
     if (__DEV__) {
       assert(typeof getter === 'function', `store.watch only accepts a function.`)
     }
     return watch(() => getter(this.state, this.getters), cb, Object.assign({}, options))
   }
-
-  replaceState (state) {
+  // 替换状态
+  replaceState(state) {
     this._withCommit(() => {
       this._state.data = state
     })
   }
-
-  registerModule (path, rawModule, options = {}) {
+  // 注册模块
+  registerModule(path, rawModule, options = {}) {
     if (typeof path === 'string') path = [path]
 
     if (__DEV__) {
@@ -228,11 +231,11 @@ export class Store {
 
     this._modules.register(path, rawModule)
     installModule(this, this.state, path, this._modules.get(path), options.preserveState)
-    // reset store to update getters...
+    // 重置 store 以更新 getter...
     resetStoreState(this, this.state)
   }
-
-  unregisterModule (path) {
+  // 卸载模块
+  unregisterModule(path) {
     if (typeof path === 'string') path = [path]
 
     if (__DEV__) {
@@ -246,8 +249,8 @@ export class Store {
     })
     resetStore(this)
   }
-
-  hasModule (path) {
+  // 判断模块是否存在
+  hasModule(path) {
     if (typeof path === 'string') path = [path]
 
     if (__DEV__) {
@@ -256,13 +259,13 @@ export class Store {
 
     return this._modules.isRegistered(path)
   }
-
-  hotUpdate (newOptions) {
+  // 热更新
+  hotUpdate(newOptions) {
     this._modules.update(newOptions)
     resetStore(this, true)
   }
-
-  _withCommit (fn) {
+  // 使用commit
+  _withCommit(fn) {
     const committing = this._committing
     this._committing = true
     fn()
