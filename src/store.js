@@ -31,15 +31,25 @@ export class Store {
       devtools
     } = options
 
-    // 存储内部状态
+    //! 存储内部状态
+
+    // 初始化提交状态标志，用于指示当前是否正在提交变更
     this._committing = false
+    // 初始化动作对象，用于存储外部触发的动作
     this._actions = Object.create(null)
+    // 初始化动作订阅者数组，用于存储动作的监听函数
     this._actionSubscribers = []
+    // 初始化变更对象，用于存储状态变更方法
     this._mutations = Object.create(null)
+    // 初始化包装后的getter对象，用于存储计算属性
     this._wrappedGetters = Object.create(null)
+    // 初始化模块集合，用于管理和存储各个模块的状态
     this._modules = new ModuleCollection(options)
+    // 初始化模块命名空间映射对象，用于存储模块的命名空间信息
     this._modulesNamespaceMap = Object.create(null)
+    // 初始化订阅者数组，用于存储状态变更的监听函数
     this._subscribers = []
+    // 初始化本地getter缓存对象，用于缓存模块的getter结果
     this._makeLocalGettersCache = Object.create(null)
 
     // EffectScope 实例。注册新的 getter 时，我们会将它们包装在
@@ -49,7 +59,7 @@ export class Store {
 
     this._devtools = devtools
 
-    // 将 commit 和 dispatch 绑定到 self
+    //! 将 commit 和 dispatch 绑定到 self
     const store = this
     const { dispatch, commit } = this
     this.dispatch = function boundDispatch(type, payload) {
@@ -68,15 +78,15 @@ export class Store {
     // init 根模块。
     // 这也递归地注册了所有子模块
     // 并收集 this._wrappedGetters 中的所有模块 getter
-    // 注册模块
+    //! 注册模块
     installModule(this, state, [], this._modules.root)
 
     // 初始化 store state，它负责响应性
     // （还将 _wrappedGetters 注册为计算属性）
-    // 重置状态
+    // !重置状态
     resetStoreState(this, state)
 
-    // apply plugins
+    //! apply plugins
     plugins.forEach(plugin => plugin(this))
   }
   // 注册
