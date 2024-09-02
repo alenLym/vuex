@@ -1,6 +1,13 @@
 import { reactive, computed, watch, effectScope } from 'vue'
 import { forEachValue, isObject, isPromise, assert, partial } from './util'
 
+/**
+ * 将函数订阅到具有可选 prepend 选项的订阅列表。
+ * @param {Function} fn - 要订阅的函数。
+ * @param {Array<Function>} subs - 订阅列表。
+ * @param {Object} 选项 - 订阅的其他选项（例如，前置）。
+ * @returns 一个函数，可以调用该函数来取消订阅订阅提供的函数。
+ */
 export function genericSubscribe(fn, subs, options) {
   if (subs.indexOf(fn) < 0) {
     options && options.prepend
@@ -15,6 +22,12 @@ export function genericSubscribe(fn, subs, options) {
   }
 }
 
+/**
+ * 通过清除 actions、mutations、getter 和 modules 来重置 Vuex store，然后重新安装根模块并重置 store 状态。
+ * @param {Object} store - 要重置的 Vuex store。
+ * @param {boolean} hot - 指示是否启用热重载。
+ * @returns 无
+ */
 export function resetStore(store, hot) {
   store._actions = Object.create(null)
   store._mutations = Object.create(null)
@@ -27,6 +40,13 @@ export function resetStore(store, hot) {
   resetStoreState(store, state, hot)
 }
 
+/**
+ * 通过清除 getter、本地 getter 缓存并将旧状态的 data 属性设置为 null，重置 Vuex store 的状态。如果存在旧范围，它还会停止旧范围。
+ * @param {Object} store - Vuex store 实例。
+ * @param {Object} 状态 - 用于替换旧状态的新状态对象。
+ * @param {boolean} hot - 指示是否启用热重载的标志。
+ * @returns 无
+ */
 export function resetStoreState(store, state, hot) {
   const oldState = store._state
   const oldScope = store._scope
